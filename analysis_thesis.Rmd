@@ -1,0 +1,11 @@
+---
+title: "analysis_thesis"
+author: "Hitomi Kariya"
+date: "3/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
