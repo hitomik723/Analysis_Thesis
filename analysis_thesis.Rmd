@@ -79,3 +79,9 @@ mammo_sub$prop_up_total <- mammo_sub$num_uptodate/mammo_sub$num_total
 
 glm(prop_up_total ~ arm, offset = prop_12, data = mammo_sub, family = poisson(link = "identity"))
 ```
+
+> Outcome variable: 0 (not update) or 1 (update)
+> Exposure variable: 0 (control) or 1 (intervention)
+> Expand the data set 
+
+> Discuss how to adjust for the covariates later
