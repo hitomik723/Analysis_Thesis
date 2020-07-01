@@ -1,0 +1,217 @@
+---
+title: "Arm Comparison (Table 2) - Thesis"
+author: "Hitomi Kariya"
+date: "5/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. Load the dataset
+```{r}
+setwd("~/Downloads/Thesis")
+library(readr)
+library(tidyverse)
+df_arm <- read_csv("thesis_table2_all.csv")
+#data for table 2 includes all women
+```
+
+# 2. Clean the dataset
+```{r}
+head(df_arm) #check the dataset
+df_arm <- df_arm[,1:5] #drop the 6th column
+colnames(df_arm) #re-check the dataset
+
+#recode screenarm (control = 0, intervention = 1)
+df_arm$screenarm <- ifelse(df_arm$screenarm == "control", 0, 1)
+
+#recode enroll_cat (12+ = 0, <12m =1)
+df_arm$enroll_cat <- ifelse(df_arm$enroll_cat == "12+", 0, 1)
+
+#recode status (not_uptake = 0, uptake =1)
+df_arm$status <- ifelse(df_arm$status == "not_uptake", 0, 1)
+
+str(df_arm) #check the class of the variables
+df_arm [,2:4] <- lapply(df_arm[,2:4], as.factor) #factorized the categorical variables
+str(df_arm) #re-check the class of the variables
+
+#expand the dataset
+exp_df_arm <- data.frame(service = rep(df_arm$service, df_arm$frequency),
+                        arm = rep(df_arm$screenarm, df_arm$frequency),
+                        enroll = rep(df_arm$enroll_cat, df_arm$frequency),
+                        status = rep(df_arm$status, df_arm$frequency))
+
+#check the exp_df_arm
+exp_df_arm %>% filter (service == "flu" & arm == 0 & enroll == 1 & status == 1) %>% nrow()
+
+#duplicate the data set for sensitivity analysis
+exp_df_arm_sens <- exp_df_arm
+
+#subset the dataset only to those who are enolled more than 12 +
+exp_df_arm <- exp_df_arm %>% filter (enroll == 0)
+```
+
+# 3. Primary Analysis
+## 3.1. Fit GLM for Mammography
+```{r}
+#subset the dataset to mammo only
+exp_df_arm_1 <- exp_df_arm %>% filter (service == "mammo")
+
+#fit a GLM model
+model_1 <- glm(status ~ arm, family = binomial, data = exp_df_arm_1)
+coef(summary(model_1))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_1))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_1))
+```
+
+## 3.2 Fit GLM for CRC screening
+```{r}
+#subset the dataset to crc only
+exp_df_arm_2 <- exp_df_arm %>% filter (service == "crc")
+
+#fit a GLM model
+model_2 <- glm(status ~ arm, family = binomial, data = exp_df_arm_2)
+coef(summary(model_2))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_2))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_2))
+```
+
+## 3.3 Fit GLM for Flu vaccine
+```{r}
+#subset the dataset to flu only
+exp_df_arm_3 <- exp_df_arm %>% filter (service == "flu")
+
+#fit a GLM model
+model_3 <- glm(status ~ arm, family = binomial, data = exp_df_arm_3)
+coef(summary(model_3))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_3))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_3))
+```
+
+## 3.4 Fit GLM for Depression Screening
+```{r}
+#subset the dataset to depression only
+exp_df_arm_4 <- exp_df_arm %>% filter (service == "depression")
+
+#fit a GLM model
+model_4 <- glm(status ~ arm, family = binomial, data = exp_df_arm_4)
+coef(summary(model_4))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_4))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_4))
+```
+
+## 3.5 Fit GLM for Diabetes Screening
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_5 <- exp_df_arm %>% filter (service == "diabetes")
+
+#fit a GLM model
+model_5 <- glm(status ~ arm, family = binomial, data = exp_df_arm_5)
+coef(summary(model_5))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_5))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_5))
+```
+
+# 4. Sensitivityy Analysis
+## 4.1. Fit GLM for Mammography
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_sens_6 <- exp_df_arm_sens %>% filter (service == "mammo")
+
+#fit a GLM model
+model_6 <- glm(status ~ arm, family = binomial, data = exp_df_arm_sens_6)
+coef(summary(model_6))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_6))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_6))
+```
+
+## 4.2. Fit GLM for CRC screening
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_sens_7 <- exp_df_arm_sens %>% filter (service == "crc")
+
+#fit a GLM model
+model_7 <- glm(status ~ arm, family = binomial, data = exp_df_arm_sens_7)
+coef(summary(model_7))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_7))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_7))
+```
+
+## 4.3. Fit GLM for Flu vaccine
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_sens_8 <- exp_df_arm_sens %>% filter (service == "flu")
+
+#fit a GLM model
+model_8 <- glm(status ~ arm, family = binomial, data = exp_df_arm_sens_8)
+coef(summary(model_8))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_8))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_8))
+```
+
+## 4.4. Fit GLM for Depression screening
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_sens_9 <- exp_df_arm_sens %>% filter (service == "depression")
+
+#fit a GLM model
+model_9 <- glm(status ~ arm, family = binomial, data = exp_df_arm_sens_9)
+coef(summary(model_9))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_9))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_9))
+```
+
+## 4.5. Fit GLM for Diabetes screening
+```{r}
+#subset the dataset to diabetes only
+exp_df_arm_sens_10 <- exp_df_arm_sens %>% filter (service == "diabetes")
+
+#fit a GLM model
+model_10 <- glm(status ~ arm, family = binomial, data = exp_df_arm_sens_10)
+coef(summary(model_10))
+
+#OR estiamte comparing intervention to control
+exp(coef(model_10))
+
+#95% CI comparing intervention to control
+exp(confint.default(model_10))
+```
+

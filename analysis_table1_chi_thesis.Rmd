@@ -1,0 +1,335 @@
+---
+title: "analysis_table1_chi_thesis"
+author: "Hitomi Kariya"
+date: "5/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+thesis_table1_chi <- read_csv("/Users/hitomi/Downloads/Thesis/thesis_table1_chi.csv")
+
+# how to use %in%
+# http://www.datasciencemadesimple.com/filter-subsetting-rows-r-using-dplyr/
+  
+# chi-square test on data frame
+# https://stackoverflow.com/questions/25350618/run-chi-squared-test-on-a-data-frame
+
+# visualize chi-square test results
+# http://www.sthda.com/english/wiki/chi-square-test-of-independence-in-r
+```
+
+# 0. Example
+```{r}
+datatable <- matrix(c(35,13,29,17,12,21),nrow=3,ncol=2)
+datatable
+chisq.test(datatable,correct=FALSE)
+
+# This example was derived from
+# http://sphweb.bumc.bu.edu/otlt/MPH-Modules/PH717-QuantCore/PH717-Module8-CategoricalData/PH717-Module8-CategoricalData4.html
+
+##### Mammo
+### Age
+table <- matrix(c(1110,642,1147,601), nrow=2, ncol=2)
+table
+chisq.test(table, correct = FALSE)
+
+### Race
+table <- matrix(c(1268,164,81,239,1262,145,75,266), nrow=4, ncol=2)
+table
+chisq.test(table, correct = FALSE)
+```
+
+#1. Mammography
+```{r}
+# mammmo only
+service <- thesis_table1_chi[,c(1:4)]
+
+### Age - c,d only for mammo & crc
+(covariate <- filter(service, value %in% c("c","d") & covariate == "age" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Race
+(covariate <- filter(service, covariate == "race" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Ethnicity
+(covariate <- filter(service, covariate == "ethnicity" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months before randomization
+(covariate <- filter(service, covariate == "num_before" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 3.4
+(covariate <- filter(service, covariate == "num_pap_3.4" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 5
+(covariate <- filter(service, covariate == "num_pap_5" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 10
+(covariate <- filter(service, covariate == "num_pap_10" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Income
+(covariate <- filter(service, covariate == "income" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Travel - NA for diabetes
+(covariate <- filter(service, covariate == "travel" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### BMI
+(covariate <- filter(service, covariate == "bmi" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Tobacco
+(covariate <- filter(service, covariate == "tobacco" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### CCI
+(covariate <- filter(service, covariate == "cci" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Randomization year
+(covariate <- filter(service, covariate == "year" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+```
+
+#2. CRC
+```{r}
+# crc only
+(service <- thesis_table1_chi[,c(1,2,5,6)])
+
+### Age c,d only for mammo & crc
+(covariate <- filter(service, value %in% c("c","d") & covariate == "age" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Race
+(covariate <- filter(service, covariate == "race" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Ethnicity
+(covariate <- filter(service, covariate == "ethnicity" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months before randomization
+(covariate <- filter(service, covariate == "num_before" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 3.4
+(covariate <- filter(service, covariate == "num_pap_3.4" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 5
+(covariate <- filter(service, covariate == "num_pap_5" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 10
+(covariate <- filter(service, covariate == "num_pap_10" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Income
+(covariate <- filter(service, covariate == "income" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Travel - NA for diabetes
+(covariate <- filter(service, covariate == "travel" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### BMI
+(covariate <- filter(service, covariate == "bmi" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Tobacco
+(covariate <- filter(service, covariate == "tobacco" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### CCI
+(covariate <- filter(service, covariate == "cci" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Randomization year
+(covariate <- filter(service, covariate == "year" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+```
+
+#3. Diabetes
+```{r}
+# diabetes only
+(service <- thesis_table1_chi[,c(1,2,7,8)])
+
+### Age c,d only for mammo & crc
+(covariate <- filter(service, covariate == "age" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Race
+(covariate <- filter(service, covariate == "race" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Ethnicity
+(covariate <- filter(service, covariate == "ethnicity" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months before randomization
+(covariate <- filter(service, covariate == "num_before" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 3.4
+(covariate <- filter(service, covariate == "num_pap_3.4" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 5
+(covariate <- filter(service, covariate == "num_pap_5" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 10
+(covariate <- filter(service, covariate == "num_pap_10" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Income
+(covariate <- filter(service, covariate == "income" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Travel - NA for diabetes
+(covariate <- filter(service, covariate == "travel" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### BMI
+(covariate <- filter(service, covariate == "bmi" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Tobacco
+(covariate <- filter(service, covariate == "tobacco" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### CCI
+(covariate <- filter(service, covariate == "cci" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Randomization year
+(covariate <- filter(service, covariate == "year" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+```
+
+#4. Flu
+```{r}
+# flu only
+(service <- thesis_table1_chi[,c(1,2,9,10)])
+
+### Age c,d only for mammo & crc
+(covariate <- filter(service, covariate == "age" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Race
+(covariate <- filter(service, covariate == "race" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Ethnicity
+(covariate <- filter(service, covariate == "ethnicity" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months before randomization
+(covariate <- filter(service, covariate == "num_before" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 3.4
+(covariate <- filter(service, covariate == "num_pap_3.4" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 5
+(covariate <- filter(service, covariate == "num_pap_5" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 10
+(covariate <- filter(service, covariate == "num_pap_10" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Income
+(covariate <- filter(service, covariate == "income" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Travel - NA for diabetes
+(covariate <- filter(service, covariate == "travel" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### BMI
+(covariate <- filter(service, covariate == "bmi" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Tobacco
+(covariate <- filter(service, covariate == "tobacco" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### CCI
+(covariate <- filter(service, covariate == "cci" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Randomization year
+(covariate <- filter(service, covariate == "year" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+```
+
+#5. Depression
+```{r}
+# depression only
+(service <- thesis_table1_chi[,c(1,2,11,12)])
+
+### Age c,d only for mammo & crc
+(covariate <- filter(service, covariate == "age" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Race
+(covariate <- filter(service, covariate == "race" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Ethnicity
+(covariate <- filter(service, covariate == "ethnicity" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months before randomization
+(covariate <- filter(service, covariate == "num_before" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 3.4
+(covariate <- filter(service, covariate == "num_pap_3.4" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 5
+(covariate <- filter(service, covariate == "num_pap_5" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Number of months from last pap 10
+(covariate <- filter(service, covariate == "num_pap_10" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Income
+(covariate <- filter(service, covariate == "income" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Travel - NA for diabetes
+(covariate <- filter(service, covariate == "travel" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### BMI
+(covariate <- filter(service, covariate == "bmi" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Tobacco
+(covariate <- filter(service, covariate == "tobacco" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### CCI
+(covariate <- filter(service, covariate == "cci" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+
+### Randomization year
+(covariate <- filter(service, covariate == "year" & !value %in% c("unknown")))
+chisq.test(as.matrix(covariate[,-1:-2]), correct = FALSE)
+```

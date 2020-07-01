@@ -1,0 +1,1433 @@
+---
+title: "Subgroup Comparison (Table 3) - Thesis"
+author: "Hitomi Kariya"
+date: "5/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1.1. Load the dataset
+```{r}
+setwd("~/Downloads/Thesis")
+library(readr)
+library(tidyverse)
+#load("~/Downloads/Thesis/hitomi_table3b_20200423.rdata") #old data
+load("~/Downloads/Thesis/hitomi_table3b_20200507.rdata")
+df_sub <- hitomi_table3b_20200507
+#data dor table 3
+```
+
+# 1.2. Clean the dataset
+```{r}
+df_sub$covariate <- paste(df_sub$covariate_name, df_sub$covariate_value, sep = "_")
+str(df_sub)
+```
+
+# 2.1 Mammography Unadjusted & Age Adjusted
+```{r}
+#subset the dataset
+df_sub_age <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "agegroup")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_age$uptake, df_sub_age$frequency),
+                               status = rep(df_sub_age$uptodate, df_sub_age$frequency),
+                               covariate = rep(df_sub_age$covariate, df_sub_age$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "agegroup_5", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.2 Mammography Race Adjusted
+```{r}
+#subset the dataset
+df_sub_race <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "race")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_race$uptake, df_sub_race$frequency),
+                               status = rep(df_sub_race$uptodate, df_sub_race$frequency),
+                               covariate = rep(df_sub_race$covariate, df_sub_race$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "race_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.3 Mammography Ethnicity Adjusted
+```{r}
+#subset the dataset
+df_sub_eth <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "ethnicity")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_eth$uptake, df_sub_eth$frequency),
+                               status = rep(df_sub_eth$uptodate, df_sub_eth$frequency),
+                               covariate = rep(df_sub_eth$covariate, df_sub_eth$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "ethnicity_0", 0, ifelse(exp_df_sub$covariate == "ethnicity_1", 1, 2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.4 Mammography enrollbfrand_c Adjusted
+```{r}
+df_sub_enr <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "enrollbfrand_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_enr$uptake, df_sub_enr$frequency),
+                               status = rep(df_sub_enr$uptodate, df_sub_enr$frequency),
+                               covariate = rep(df_sub_enr$covariate, df_sub_enr$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "enrollbfrand_c_2", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.5 Mammography lastpap_cat Adjusted
+```{r}
+df_sub_last <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "lastpap_cat")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_last$uptake, df_sub_last$frequency),
+                               status = rep(df_sub_last$uptodate, df_sub_last$frequency),
+                               covariate = rep(df_sub_last$covariate, df_sub_last$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "lastpap_cat_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.6 Mammography medhousincome_c Adjusted
+```{r}
+df_sub_income <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "medhousincome_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_income$uptake, df_sub_income$frequency),
+                               status = rep(df_sub_income$uptodate, df_sub_income$frequency),
+                               covariate = rep(df_sub_income$covariate, df_sub_income$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "medhousincome_c_1", 0, ifelse(exp_df_sub$covariate == "medhousincome_c_3", 1,ifelse(exp_df_sub$covariate == "medhousincome_c_4", 2, ifelse(exp_df_sub$covariate == "medhousincome_c_5", 3, 4))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.7 Mammography bmi Adjusted
+```{r}
+df_sub_bmi <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "bmi")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_bmi$uptake, df_sub_bmi$frequency),
+                               status = rep(df_sub_bmi$uptodate, df_sub_bmi$frequency),
+                               covariate = rep(df_sub_bmi$covariate, df_sub_bmi$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "bmi_1", 0, ifelse(exp_df_sub$covariate == "bmi_3", 1,ifelse(exp_df_sub$covariate == "bmi_4", 2, ifelse(exp_df_sub$covariate == "bmi_5", 3, ifelse(exp_df_sub$covariate == "bmi_6", 4, 5)))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.8 Mammography tobacco_use Adjusted
+```{r}
+df_sub_tob <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "tobacco_use")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_tob$uptake, df_sub_tob$frequency),
+                               status = rep(df_sub_tob$uptodate, df_sub_tob$frequency),
+                               covariate = rep(df_sub_tob$covariate, df_sub_tob$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "tobacco_use_0", 0, ifelse(exp_df_sub$covariate == "tobacco_use_1", 1,ifelse(exp_df_sub$covariate == "tobacco_use_2", 2, 9)))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 2.9 Mammography charlson Adjusted
+```{r}
+df_sub_cha <- df_sub %>% filter (prev_serv == 4) %>% filter(covariate_name == "charlson")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_cha$uptake, df_sub_cha$frequency),
+                               status = rep(df_sub_cha$uptodate, df_sub_cha$frequency),
+                               covariate = rep(df_sub_cha$covariate, df_sub_cha$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "charlson_0", 0, ifelse(exp_df_sub$covariate == "charlson_1", 1,2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.1 CRC screening Unadjusted & Age Adjusted
+```{r}
+#subset the dataset
+df_sub_age <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "agegroup")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_age$uptake, df_sub_age$frequency),
+                               status = rep(df_sub_age$uptodate, df_sub_age$frequency),
+                               covariate = rep(df_sub_age$covariate, df_sub_age$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "agegroup_5", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.2 CRC screening Race Adjusted
+```{r}
+#subset the dataset
+df_sub_race <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "race")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_race$uptake, df_sub_race$frequency),
+                               status = rep(df_sub_race$uptodate, df_sub_race$frequency),
+                               covariate = rep(df_sub_race$covariate, df_sub_race$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "race_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.3 CRC screening Ethnicity Adjusted
+```{r}
+#subset the dataset
+df_sub_eth <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "ethnicity")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_eth$uptake, df_sub_eth$frequency),
+                               status = rep(df_sub_eth$uptodate, df_sub_eth$frequency),
+                               covariate = rep(df_sub_eth$covariate, df_sub_eth$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "ethnicity_0", 0, ifelse(exp_df_sub$covariate == "ethnicity_1", 1, 2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.4 CRC screening enrollbfrand_c Adjusted
+```{r}
+df_sub_enr <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "enrollbfrand_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_enr$uptake, df_sub_enr$frequency),
+                               status = rep(df_sub_enr$uptodate, df_sub_enr$frequency),
+                               covariate = rep(df_sub_enr$covariate, df_sub_enr$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "enrollbfrand_c_2", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.5 CRC screening lastpap_cat Adjusted
+```{r}
+df_sub_last <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "lastpap_cat")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_last$uptake, df_sub_last$frequency),
+                               status = rep(df_sub_last$uptodate, df_sub_last$frequency),
+                               covariate = rep(df_sub_last$covariate, df_sub_last$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "lastpap_cat_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.6 CRC screening medhousincome_c Adjusted
+```{r}
+df_sub_income <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "medhousincome_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_income$uptake, df_sub_income$frequency),
+                               status = rep(df_sub_income$uptodate, df_sub_income$frequency),
+                               covariate = rep(df_sub_income$covariate, df_sub_income$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "medhousincome_c_1", 0, ifelse(exp_df_sub$covariate == "medhousincome_c_3", 1,ifelse(exp_df_sub$covariate == "medhousincome_c_4", 2, ifelse(exp_df_sub$covariate == "medhousincome_c_5", 3, 4))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.7 CRC screening bmi Adjusted
+```{r}
+df_sub_bmi <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "bmi")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_bmi$uptake, df_sub_bmi$frequency),
+                               status = rep(df_sub_bmi$uptodate, df_sub_bmi$frequency),
+                               covariate = rep(df_sub_bmi$covariate, df_sub_bmi$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "bmi_1", 0, ifelse(exp_df_sub$covariate == "bmi_3", 1,ifelse(exp_df_sub$covariate == "bmi_4", 2, ifelse(exp_df_sub$covariate == "bmi_5", 3, ifelse(exp_df_sub$covariate == "bmi_6", 4, 5)))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.8 CRC screening tobacco_use Adjusted
+```{r}
+df_sub_tob <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "tobacco_use")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_tob$uptake, df_sub_tob$frequency),
+                               status = rep(df_sub_tob$uptodate, df_sub_tob$frequency),
+                               covariate = rep(df_sub_tob$covariate, df_sub_tob$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "tobacco_use_0", 0, ifelse(exp_df_sub$covariate == "tobacco_use_1", 1,ifelse(exp_df_sub$covariate == "tobacco_use_2", 2, 9)))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 3.9 CRC screening charlson Adjusted
+```{r}
+df_sub_cha <- df_sub %>% filter (prev_serv == 2) %>% filter(covariate_name == "charlson")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_cha$uptake, df_sub_cha$frequency),
+                               status = rep(df_sub_cha$uptodate, df_sub_cha$frequency),
+                               covariate = rep(df_sub_cha$covariate, df_sub_cha$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "charlson_0", 0, ifelse(exp_df_sub$covariate == "charlson_1", 1,2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.1 Flu vaccine Unadjusted & Age Adjusted
+```{r}
+#subset the dataset
+df_sub_age <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "agegroup")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_age$uptake, df_sub_age$frequency),
+                               status = rep(df_sub_age$uptodate, df_sub_age$frequency),
+                               covariate = rep(df_sub_age$covariate, df_sub_age$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "agegroup_5", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.2 Flu vaccine  Race Adjusted
+```{r}
+#subset the dataset
+df_sub_race <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "race")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_race$uptake, df_sub_race$frequency),
+                               status = rep(df_sub_race$uptodate, df_sub_race$frequency),
+                               covariate = rep(df_sub_race$covariate, df_sub_race$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "race_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.3 Flu vaccine  Ethnicity Adjusted
+```{r}
+#subset the dataset
+df_sub_eth <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "ethnicity")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_eth$uptake, df_sub_eth$frequency),
+                               status = rep(df_sub_eth$uptodate, df_sub_eth$frequency),
+                               covariate = rep(df_sub_eth$covariate, df_sub_eth$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "ethnicity_0", 0, ifelse(exp_df_sub$covariate == "ethnicity_1", 1, 2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.4 Flu vaccine enrollbfrand_c Adjusted
+```{r}
+df_sub_enr <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "enrollbfrand_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_enr$uptake, df_sub_enr$frequency),
+                               status = rep(df_sub_enr$uptodate, df_sub_enr$frequency),
+                               covariate = rep(df_sub_enr$covariate, df_sub_enr$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "enrollbfrand_c_2", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.5 Flu vaccine  lastpap_cat Adjusted
+```{r}
+df_sub_last <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "lastpap_cat")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_last$uptake, df_sub_last$frequency),
+                               status = rep(df_sub_last$uptodate, df_sub_last$frequency),
+                               covariate = rep(df_sub_last$covariate, df_sub_last$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "lastpap_cat_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.6 Flu vaccine  medhousincome_c Adjusted
+```{r}
+df_sub_income <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "medhousincome_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_income$uptake, df_sub_income$frequency),
+                               status = rep(df_sub_income$uptodate, df_sub_income$frequency),
+                               covariate = rep(df_sub_income$covariate, df_sub_income$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "medhousincome_c_1", 0, ifelse(exp_df_sub$covariate == "medhousincome_c_3", 1,ifelse(exp_df_sub$covariate == "medhousincome_c_4", 2, ifelse(exp_df_sub$covariate == "medhousincome_c_5", 3, 4))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.7 Flu vaccine  bmi Adjusted
+```{r}
+df_sub_bmi <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "bmi")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_bmi$uptake, df_sub_bmi$frequency),
+                               status = rep(df_sub_bmi$uptodate, df_sub_bmi$frequency),
+                               covariate = rep(df_sub_bmi$covariate, df_sub_bmi$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "bmi_1", 0, ifelse(exp_df_sub$covariate == "bmi_3", 1,ifelse(exp_df_sub$covariate == "bmi_4", 2, ifelse(exp_df_sub$covariate == "bmi_5", 3, ifelse(exp_df_sub$covariate == "bmi_6", 4, 5)))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.8 Flu vaccine  tobacco_use Adjusted
+```{r}
+df_sub_tob <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "tobacco_use")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_tob$uptake, df_sub_tob$frequency),
+                               status = rep(df_sub_tob$uptodate, df_sub_tob$frequency),
+                               covariate = rep(df_sub_tob$covariate, df_sub_tob$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "tobacco_use_0", 0, ifelse(exp_df_sub$covariate == "tobacco_use_1", 1,ifelse(exp_df_sub$covariate == "tobacco_use_2", 2, 9)))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 4.9 Flu vaccine  charlson Adjusted
+```{r}
+df_sub_cha <- df_sub %>% filter (prev_serv == 3) %>% filter(covariate_name == "charlson")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_cha$uptake, df_sub_cha$frequency),
+                               status = rep(df_sub_cha$uptodate, df_sub_cha$frequency),
+                               covariate = rep(df_sub_cha$covariate, df_sub_cha$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "charlson_0", 0, ifelse(exp_df_sub$covariate == "charlson_1", 1,2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.1 Depression screening Unadjusted & Age Adjusted
+```{r}
+#subset the dataset
+df_sub_age <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "agegroup")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_age$uptake, df_sub_age$frequency),
+                               status = rep(df_sub_age$uptodate, df_sub_age$frequency),
+                               covariate = rep(df_sub_age$covariate, df_sub_age$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "agegroup_5", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.2 Depression screening  Race Adjusted
+```{r}
+#subset the dataset
+df_sub_race <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "race")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_race$uptake, df_sub_race$frequency),
+                               status = rep(df_sub_race$uptodate, df_sub_race$frequency),
+                               covariate = rep(df_sub_race$covariate, df_sub_race$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "race_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.3 Depression screening  Ethnicity Adjusted
+```{r}
+#subset the dataset
+df_sub_eth <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "ethnicity")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_eth$uptake, df_sub_eth$frequency),
+                               status = rep(df_sub_eth$uptodate, df_sub_eth$frequency),
+                               covariate = rep(df_sub_eth$covariate, df_sub_eth$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "ethnicity_0", 0, ifelse(exp_df_sub$covariate == "ethnicity_1", 1, 2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.4 Depression screening enrollbfrand_c Adjusted
+```{r}
+df_sub_enr <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "enrollbfrand_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_enr$uptake, df_sub_enr$frequency),
+                               status = rep(df_sub_enr$uptodate, df_sub_enr$frequency),
+                               covariate = rep(df_sub_enr$covariate, df_sub_enr$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "enrollbfrand_c_2", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.5 Depression screening lastpap_cat Adjusted
+```{r}
+df_sub_last <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "lastpap_cat")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_last$uptake, df_sub_last$frequency),
+                               status = rep(df_sub_last$uptodate, df_sub_last$frequency),
+                               covariate = rep(df_sub_last$covariate, df_sub_last$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "lastpap_cat_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.6 Depression screening medhousincome_c Adjusted
+```{r}
+df_sub_income <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "medhousincome_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_income$uptake, df_sub_income$frequency),
+                               status = rep(df_sub_income$uptodate, df_sub_income$frequency),
+                               covariate = rep(df_sub_income$covariate, df_sub_income$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "medhousincome_c_1", 0, ifelse(exp_df_sub$covariate == "medhousincome_c_3", 1,ifelse(exp_df_sub$covariate == "medhousincome_c_4", 2, ifelse(exp_df_sub$covariate == "medhousincome_c_5", 3, 4))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.7 Depression screening bmi Adjusted
+```{r}
+df_sub_bmi <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "bmi")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_bmi$uptake, df_sub_bmi$frequency),
+                               status = rep(df_sub_bmi$uptodate, df_sub_bmi$frequency),
+                               covariate = rep(df_sub_bmi$covariate, df_sub_bmi$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "bmi_1", 0, ifelse(exp_df_sub$covariate == "bmi_3", 1,ifelse(exp_df_sub$covariate == "bmi_4", 2, ifelse(exp_df_sub$covariate == "bmi_5", 3, ifelse(exp_df_sub$covariate == "bmi_6", 4, 5)))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.8 Depression screening  tobacco_use Adjusted
+```{r}
+df_sub_tob <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "tobacco_use")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_tob$uptake, df_sub_tob$frequency),
+                               status = rep(df_sub_tob$uptodate, df_sub_tob$frequency),
+                               covariate = rep(df_sub_tob$covariate, df_sub_tob$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "tobacco_use_0", 0, ifelse(exp_df_sub$covariate == "tobacco_use_1", 1,ifelse(exp_df_sub$covariate == "tobacco_use_2", 2, 9)))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 5.9 Depression screening charlson Adjusted
+```{r}
+df_sub_cha <- df_sub %>% filter (prev_serv == 5) %>% filter(covariate_name == "charlson")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_cha$uptake, df_sub_cha$frequency),
+                               status = rep(df_sub_cha$uptodate, df_sub_cha$frequency),
+                               covariate = rep(df_sub_cha$covariate, df_sub_cha$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "charlson_0", 0, ifelse(exp_df_sub$covariate == "charlson_1", 1,2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+# 6. Diabetes screening unadjusted
+```{r}
+df_diabetes_12 <- read_csv("thesis_table3_diabetes_enroll12month+.csv")
+#data for table 3 that inlcludes 12 months + women
+
+head(df_diabetes_12) #check the dataset
+colnames(df_diabetes_12) #re-check the dataset
+str(df_diabetes_12)
+
+#recode subgroups (nothing = 0, pap_only = 1, completed =2)
+df_diabetes_12$uptake <- ifelse(df_diabetes_12$uptake == "nothing", 0, ifelse(df_diabetes_12$uptake == "pap_only", 1, 2))
+
+#recode enroll_cat (12+ = 0, <12m =1)
+df_diabetes_12$enroll_cat <- ifelse(df_diabetes_12$enroll_cat == "12+", 0, 1)
+
+#recode status (not_uptake = 0, uptake =1)
+df_diabetes_12$status <- ifelse(df_diabetes_12$status == "not_uptake", 0, 1)
+
+str(df_diabetes_12) #check the class of the variables
+df_diabetes_12 [,2:4] <- lapply(df_diabetes_12[,2:4], as.factor) #factorized the categorical variables
+str(df_diabetes_12) #re-check the class of the variables
+
+#expand the dataset
+exp_df_diabetes <- data.frame(service = rep(df_diabetes_12$service, df_diabetes_12$frequency),
+                        subgroup = rep(df_diabetes_12$uptake, df_diabetes_12$frequency),
+                        enroll = rep(df_diabetes_12$enroll_cat, df_diabetes_12$frequency),
+                        status = rep(df_diabetes_12$status, df_diabetes_12$frequency))
+str(exp_df_diabetes)
+
+#check the exp_df_diabetes
+exp_df_diabetes %>% filter (subgroup == 0 & status == 1) %>% nrow()
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ subgroup, family = binomial, data = exp_df_diabetes)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+### No need to use the below codes 
+# 6.1 Diabetes screening Unadjusted & Age Adjusted
+```{r}
+### Cannot conduct anlaysis due to missing subgroups
+#subset the dataset
+df_sub_age <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "agegroup")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_age$uptake, df_sub_age$frequency),
+                               status = rep(df_sub_age$uptodate, df_sub_age$frequency),
+                               covariate = rep(df_sub_age$covariate, df_sub_age$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "agegroup_5", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.2 Diabetesscreening  Race Adjusted
+```{r}
+#subset the dataset
+df_sub_race <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "race")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_race$uptake, df_sub_race$frequency),
+                               status = rep(df_sub_race$uptodate, df_sub_race$frequency),
+                               covariate = rep(df_sub_race$covariate, df_sub_race$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "race_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.3 Diabetes screening  Ethnicity Adjusted
+```{r}
+#subset the dataset
+df_sub_eth <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "ethnicity")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_eth$uptake, df_sub_eth$frequency),
+                               status = rep(df_sub_eth$uptodate, df_sub_eth$frequency),
+                               covariate = rep(df_sub_eth$covariate, df_sub_eth$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "ethnicity_0", 0, ifelse(exp_df_sub$covariate == "ethnicity_1", 1, 2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.4 Diabetes screening enrollbfrand_c Adjusted
+```{r}
+df_sub_enr <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "enrollbfrand_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_enr$uptake, df_sub_enr$frequency),
+                               status = rep(df_sub_enr$uptodate, df_sub_enr$frequency),
+                               covariate = rep(df_sub_enr$covariate, df_sub_enr$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "enrollbfrand_c_2", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.5 Diabetes screening lastpap_cat Adjusted
+```{r}
+df_sub_last <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "lastpap_cat")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_last$uptake, df_sub_last$frequency),
+                               status = rep(df_sub_last$uptodate, df_sub_last$frequency),
+                               covariate = rep(df_sub_last$covariate, df_sub_last$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "lastpap_cat_1", 0, 1)
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Unadjusted
+# fit a GLM model
+model <- glm(status ~ group, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.6 Diabetes screening medhousincome_c Adjusted
+```{r}
+### Cannot conduct anlaysis due to missing subgroups
+df_sub_income <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "medhousincome_c")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_income$uptake, df_sub_income$frequency),
+                               status = rep(df_sub_income$uptodate, df_sub_income$frequency),
+                               covariate = rep(df_sub_income$covariate, df_sub_income$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "medhousincome_c_1", 0, ifelse(exp_df_sub$covariate == "medhousincome_c_3", 1,ifelse(exp_df_sub$covariate == "medhousincome_c_4", 2, ifelse(exp_df_sub$covariate == "medhousincome_c_5", 3, 4))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.7 Diabetes screening bmi Adjusted
+```{r}
+### Cannot conduct anlaysis due to missing subgroups
+df_sub_bmi <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "bmi")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_bmi$uptake, df_sub_bmi$frequency),
+                               status = rep(df_sub_bmi$uptodate, df_sub_bmi$frequency),
+                               covariate = rep(df_sub_bmi$covariate, df_sub_bmi$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "bmi_1", 0, ifelse(exp_df_sub$covariate == "bmi_3", 1,ifelse(exp_df_sub$covariate == "bmi_4", 2, ifelse(exp_df_sub$covariate == "bmi_5", 3, ifelse(exp_df_sub$covariate == "bmi_6", 4, 5)))))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.8 Diabetes screening  tobacco_use Adjusted
+```{r}
+### Cannot conduct anlaysis due to missing subgroups
+df_sub_tob <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "tobacco_use")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_tob$uptake, df_sub_tob$frequency),
+                               status = rep(df_sub_tob$uptodate, df_sub_tob$frequency),
+                               covariate = rep(df_sub_tob$covariate, df_sub_tob$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "tobacco_use_0", 0, ifelse(exp_df_sub$covariate == "tobacco_use_1", 1,ifelse(exp_df_sub$covariate == "tobacco_use_2", 2, 9)))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+
+# 6.9 Diabetes screening charlson Adjusted
+```{r}
+### Cannot conduct anlaysis due to missing subgroups
+df_sub_cha <- df_sub %>% filter (prev_serv == 1) %>% filter(covariate_name == "charlson")
+
+#expand the dataset
+exp_df_sub <- data.frame(group = rep(df_sub_cha$uptake, df_sub_cha$frequency),
+                               status = rep(df_sub_cha$uptodate, df_sub_cha$frequency),
+                               covariate = rep(df_sub_cha$covariate, df_sub_cha$frequency))
+
+str(exp_df_sub)
+exp_df_sub$covariate <- ifelse(exp_df_sub$covariate == "charlson_0", 0, ifelse(exp_df_sub$covariate == "charlson_1", 1,2))
+exp_df_sub <- lapply(exp_df_sub, as.factor) #factorized the categorical variables
+str(exp_df_sub)
+exp_df_sub <- as.data.frame(exp_df_sub)
+str(exp_df_sub)
+
+## Adjusted
+model <- glm(status ~ group + covariate, family = binomial, data = exp_df_sub)
+coef(summary(model))
+
+#OR estiamte comparing intervention to control
+exp(coef(model))
+
+#95% CI comparing intervention to control
+exp(confint.default(model))
+```
+# Check the original dataset for Diabetes screening
+```{r}
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "agegroup")
+# there is no uptake = 1 or uptake = 2 group for medhousincome_c
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "bmi")
+# there is no uptake = 1 group for bmi
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "medhousincome_c")
+# there is no uptake = 1 or uptake = 2 group for medhousincome_c
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "tobacco_use")
+# there is no uptake = 1 or uptake = 2 group for tobacco_use
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "charlson")
+# there is no uptake = 1 or uptake = 2 group for charlson
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "enrollbfrand_c")
+
+df_sub %>%  filter (prev_serv == 1 & covariate_name == "lastpap_cat")
+```
+
+# Check the original dataset for Mammography
+```{r}
+df_sub %>%  filter (prev_serv == 4 & covariate_name == "race")
+```
+
+```{r}
+```
